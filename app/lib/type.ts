@@ -9,14 +9,14 @@ export interface Post {
 }
 
 export const images : Record<string, string> = {
-    'Adam Jensen': '/adam_jensen.jpg',
+    'Adam jensen': '/adam_jensen.jpg',
     'Dead Poet Society': '/dead_poet_society.jpg',
     'Edgehill': '/edgehill.jpg',
     'Gorillaz': '/gorillaz.jpg',
-    'Lisa': '/lisa.jpg',
-    'Nothing But Thieves': '/nothing_but_thieves.jpg',
-    'Radiohead': '/radiohead.jpg',
+    'LISA': '/lisa.jpg',
+    'Nothing But Thieves': '/nothin_but_thieves.jpg',
+    'Radio Head': '/radiohead.jpg',
     'Sleep Token': '/sleep_token.jpg',
     'The Strokes': '/the_strokes.jpg',
-    'twenty_one_pilots': '/twenty_one_pilots.jpg'
+    'Twenty One Pilots': '/twenty_one_pilots.jpg'
 }

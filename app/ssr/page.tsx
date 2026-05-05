@@ -1,6 +1,8 @@
 import PostList from "../ui/postList";
 import { getPosts } from "../lib/getPost";
 
+export const dynamic = 'force-dynamic';
+
 export default async function SSRPage() {
     // no-store: Obliga a Next.js a consultar la API en cada recarga
     const posts = await getPosts({ cache: 'no-store' });

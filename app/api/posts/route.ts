@@ -1,24 +1,27 @@
 import { NextResponse } from 'next/server';
-import { Pool } from 'pg';
+import postgres from 'postgres';
 
-const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    database: process.env.DB_NAME,
+export const dynamic = 'force-dynamic';
+
+// Conexión a tu base de datos usando postgres.js
+const sql = postgres({
+    host: 'localhost',
+    port: 5432,
+    database: 'blog',
+    username: 'admin',
+    password: 'admin',
 });
 
 export async function GET() {
     try {
-        const result = await pool.query(`
+        const rows = await sql`
             SELECT id, band_name, review, emoji, random_val, created_at AS timestamp, user_id 
             FROM band_posts 
-            ORDER BY id DESC 
+            ORDER BY RANDOM()
             LIMIT 5
-        `);
+        `;
 
-        const postsWithRandomCache = result.rows.map(post => ({
+        const postsWithRandomCache = rows.map(post => ({
             ...post,
             random_val: Math.random() 
         }));
@@ -26,11 +29,8 @@ export async function GET() {
         return NextResponse.json(postsWithRandomCache);
 
     } catch (error) {
-        console.error("Error al consultar PostgreSQL:", error);
-        return NextResponse.json(
-            { error: "Error al obtener los posts" }, 
-            { status: 500 }
-        );
+        console.error("Error en la BD:", error);
+        return NextResponse.json({ error: "Error interno" }, { status: 500 });
     }
 }
 
@@ -38,20 +38,19 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { band_name, review, emoji, user_id } = body;
+        const random_val = Math.random();
+        const uId = user_id || 1;
 
-        const result = await pool.query(`
+        const newPost = await sql`
             INSERT INTO band_posts (band_name, review, emoji, random_val, user_id) 
-            VALUES ($1, $2, $3, $4, $5) 
+            VALUES (${band_name}, ${review}, ${emoji}, ${random_val}, ${uId}) 
             RETURNING id, band_name, review, emoji, random_val, created_at AS timestamp, user_id
-        `, [band_name, review, emoji, Math.random(), user_id || 1]);
+        `;
 
-        return NextResponse.json(result.rows[0], { status: 201 });
+        return NextResponse.json(newPost[0], { status: 201 });
 
     } catch (error) {
-        console.error("Error al insertar en PostgreSQL:", error);
-        return NextResponse.json(
-            { error: "Error al crear el post" }, 
-            { status: 500 }
-        );
+        console.error("Error al insertar:", error);
+        return NextResponse.json({ error: "Error al crear post" }, { status: 500 });
     }
 }

@@ -20,3 +20,5 @@ export const images : Record<string, string> = {
     'The Strokes': '/the_strokes.jpg',
     'Twenty One Pilots': '/twenty_one_pilots.jpg'
 }
+
+export const allowedEmojis = ["🎸", "🎤", "🤘", "🎺"];
